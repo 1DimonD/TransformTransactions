@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,25 +9,26 @@ namespace TransformTransactions.Extractors
 {
     internal class FileDataExtractor : IDataExtractor
     {
-        private string? _filePath;
-        public string? FilePath
+
+        public FileDataExtractor() { }
+        public FileDataExtractor(string filePath) 
         {
-            get => _filePath;
-            set
-            {
-                if (!File.Exists(value))
-                {
-                    throw new FileNotFoundException($"The file {value} could not be found.");
-                }
-                _filePath = value;
-            }
-        }
+            _filePath = filePath;
+        }   
+
+        private string? _filePath;
+        public void SetFilePath(string filePath) => _filePath = filePath;
 
         public List<string> ExtractData()
         {
             if (string.IsNullOrEmpty(_filePath))
             {
                 throw new InvalidOperationException("The FilePath property must be set before calling ExtractData().");
+            }
+
+            if (!File.Exists(_filePath))
+            {
+                throw new FileNotFoundException($"The file {_filePath} could not be found.");
             }
 
             List<string> data = new();
